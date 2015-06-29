@@ -161,6 +161,17 @@ this is the twitter API code to be entered into the bash terminal after your twi
 --master "local[*]" \
 lib/spark-examples-*.jar
 ```
+For the CMS program streaming example
+
+```sh
+//sh
+./bin/spark-submit \
+--class "org.apache.spark.examples.streaming.TwitterAlgebirdCMS" \
+--master "local[*]" \
+lib/spark-examples-*.jar
+```
+
+to cross check an id on Twitter go to http://tweeterid.com/
 
 
 #### 007_unifying_the_pieces_spark_sql
