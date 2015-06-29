@@ -143,6 +143,29 @@ distFile = sc.textFile("README.md")
 distFile.map(lambda l: l.split(" ")).collect()
 distFile.flatMap(lambda l: l.split(" ")).collect()
 ```
+#### 005_spark_essentials
+This is the security file for Mark Albrecht's Twitter Account
+you have to create a twitter4j.properties file with an editor and save it in the 
+spark main directory with the following exact text
+```
+debug=true
+oauth.consumerKey=BW7rxG20M4n3c4dDryUBXX4x5
+oauth.consumerSecret=LizUGw0Q2w2NYJaz7QrfWJe1NOJnkdC8GbMkElVuCNLEB3oJ4j
+oauth.accessToken=515742244-SoJQo4TPzEDTazkgh93g5nKUQuf2CgTVCBsLgUZh
+oauth.accessTokenSecret=5C0sSWdRBWeyp8pMLPPeYl2V0xc2KWIFw7LHWRazpka66
+
+```
+this is the twitter API code to be entered into the bash terminal after your twitter4j properties file is created and saved on the main spark folder directory (i.e. the home directory from which this command is run)
+
+```sh
+//sh
+./bin/spark-submit \
+--class "org.apache.spark.examples.streaming.TwitterAlgebirdHLL" \
+--master "local[*]" \
+lib/spark-examples-*.jar
+```
+
+
 #### 007_unifying_the_pieces_spark_sql
 ```scala
 // sqlContext is initialized as part of the spark-shell
