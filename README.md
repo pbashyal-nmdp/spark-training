@@ -144,16 +144,13 @@ distFile.map(lambda l: l.split(" ")).collect()
 distFile.flatMap(lambda l: l.split(" ")).collect()
 ```
 #### 005_spark_essentials
-This is the security file for Mark Albrecht's Twitter Account
-you have to create a twitter4j.properties file with an editor and save it in the 
-spark main directory with the following exact text
+Get the security file for Mark Albrecht's twitter account from email and put it in the spark main directory.  The text will look like this
 ```
 debug=true
-oauth.consumerKey=BW7rxG20M4n3c4dDryUBXX4x5
-oauth.consumerSecret=LizUGw0Q2w2NYJaz7QrfWJe1NOJnkdC8GbMkElVuCNLEB3oJ4j
-oauth.accessToken=515742244-SoJQo4TPzEDTazkgh93g5nKUQuf2CgTVCBsLgUZh
-oauth.accessTokenSecret=5C0sSWdRBWeyp8pMLPPeYl2V0xc2KWIFw7LHWRazpka66
-
+oauth.consumerKey=XXX
+oauth.consumerSecret=XXX
+oauth.accessToken=XXX
+oauth.accessTokenSecret=XXX
 ```
 this is the twitter API code to be entered into the bash terminal after your twitter4j properties file is created and saved on the main spark folder directory (i.e. the home directory from which this command is run)
 
