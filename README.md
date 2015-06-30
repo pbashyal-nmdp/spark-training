@@ -136,7 +136,7 @@ val distFile = sc.textFile("README.md")
 distFile.map(l => l.split(" ")).collect()
 distFile.flatMap(l => l.split(" ")).collect()
 ```
-```scala
+```python
 // Python
 distFile = sc.textFile("README.md")
 // Difference between map and flatMap
