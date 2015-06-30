@@ -143,7 +143,7 @@ distFile = sc.textFile("README.md")
 distFile.map(lambda l: l.split(" ")).collect()
 distFile.flatMap(lambda l: l.split(" ")).collect()
 ```
-#### 005_spark_essentials
+#### 006_spark_examples
 Get the security file for Mark Albrecht's twitter account from email and put it in the spark main directory.  The text will look like this
 ```
 debug=true
@@ -175,14 +175,13 @@ to cross check an id on Twitter go to http://tweeterid.com/
 
 
 #### 007_unifying_the_pieces_spark_sql
+
 ```scala
-// sqlContext is initialized as part of the spark-shell
-// val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+// sqlContext is initialized as part of the spark-shell (you have to run the line below)
+//val sqlContext = new org.apache.spark.sql.SQLContext(sc)
 import sqlContext.implicits._
 case class Person(name: String, age: Int)
-val people = sc.textFile("examples/src/main/resources/people.txt").
-  map(_.split(",")).
-  map(p => Person(p(0), p(1).trim.toInt))
+val people = sc.textFile("/usr/local/spark/examples/src/main/resources/people.txt").map(_.split(",")).map(p => Person(p(0), p(1).trim.toInt))
 // SchemaRDD migrated to DataFrame.   
 people.toDF().registerTempTable("people")  
 val teenagers = sqlContext.sql("SELECT name FROM people WHERE age >= 13 AND age <= 19")
@@ -208,22 +207,21 @@ Using Spark SQL DSL
 // val sqlContext = new org.apache.spark.sql.SQLContext(sc)
 import sqlContext.implicits._
 case class Person(name: String, age: Int)
-val people = sc.textFile("examples/src/main/resources/people.txt").
-  map(_.split(",")).
-  map(p => Person(p(0), p(1).trim.toInt)).
-  toDF()
-
+val people = sc.textFile("/usr/local/spark/examples/src/main/resources/people.txt").map(_.split(",")).map(p => Person(p(0), p(1).trim.toInt)).toDF()
 val teenagers = people.where('age >= 13).where('age <= 19).select('name)
+teenagers.explain
+teenagers.collect()
 ```
 IPython Notebook
 ```sh
-IPYTHON_OPTS="notebook" ./bin/pyspark
+//this will not work on  pradeep's box
+IPYTHON_OPTS="notebook" /usr/local/spark/bin/pyspark
 ```
 ```python
 from pyspark.sql import SQLContext, Row
 sqlContext = SQLContext(sc) 
 
-lines = sc.textFile("examples/src/main/resources/people.txt")
+lines = sc.textFile("/usr/local/spark/examples/src/main/resources/people.txt")
 parts = lines.map(lambda l: l.split(","))
 people = parts.map(lambda p: Row(name = p[0], age = int(p[1])))
 
@@ -242,10 +240,18 @@ teennames.collect()
 nc -lk 9999
 ```
 ```sh
-# Scala
- bin/run-example org.apache.spark.examples.streaming.NetworkWordCount localhost 9999
+//Scala
+ /usr/local/spark/bin/run-example org.apache.spark.examples.streaming.NetworkWordCount localhost 9999
 ```
 ```sh
-# Python
-bin/spark-submit examples/src/main/python/streaming/network_wordcount.py localhost 9999
+// Python
+/usr/local/spark/bin/spark-submit /usr/local/spark/examples/src/main/python/streaming/network_wordcount.py localhost 9999
 ```
+
+Here is the stateful example that updates a data stream using the same setup
+```sh
+// Python
+/usr/local/spark/bin/spark-submit /usr/local/spark/examples/src/main/python/streaming/stateful_network_wordcount.py localhost 9999
+```
+
+
