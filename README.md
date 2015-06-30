@@ -155,7 +155,6 @@ oauth.accessTokenSecret=XXX
 this is the twitter API code to be entered into the bash terminal after your twitter4j properties file is created and saved on the main spark folder directory (i.e. the home directory from which this command is run)
 
 ```sh
-//sh
 ./bin/spark-submit \
 --class "org.apache.spark.examples.streaming.TwitterAlgebirdHLL" \
 --master "local[*]" \
@@ -164,7 +163,6 @@ lib/spark-examples-*.jar
 For the CMS program streaming example
 
 ```sh
-//sh
 ./bin/spark-submit \
 --class "org.apache.spark.examples.streaming.TwitterAlgebirdCMS" \
 --master "local[*]" \
