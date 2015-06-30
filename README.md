@@ -251,5 +251,74 @@ Here is the stateful example that updates a data stream using the same setup
 // Python
 /usr/local/spark/bin/spark-submit /usr/local/spark/examples/src/main/python/streaming/stateful_network_wordcount.py localhost 9999
 ```
+#### 009_MLLIB_and_GraphX
+GraphX example
+
+```sh
+//launch the spark-shell
+/usr/local/spark/bin/spark-shell
+```
+
+```scala
+import org.apache.spark.graphx._
+import org.apache.spark.rdd.RDD
+
+case class Peep(name: String, age: Int)
+val nodeArray = Array(
+(1L, Peep("Kim", 23)), (2L, Peep("Pat", 31)),
+(3L, Peep("Chris", 52)), (4L, Peep("Kelly", 39)),
+(5L, Peep("Leslie", 45))
+)
+val edgeArray = Array(
+Edge(2L, 1L, 7), Edge(2L, 4L, 2),
+Edge(3L, 2L, 4), Edge(3L, 5L, 3),
+Edge(4L, 1L, 1), Edge(5L, 3L, 9)
+)
+
+val nodeRDD: RDD[(Long, Peep)] = sc.parallelize(nodeArray)
+val edgeRDD: RDD[Edge[Int]] = sc.parallelize(edgeArray)
+val g: Graph[Peep, Int] = Graph(nodeRDD, edgeRDD)
+
+val results = g.triplets.filter(t => t.attr > 7)
+
+for (triplet <- results.collect) {
+println(s"${triplet.srcAttr.name} loves ${triplet.dstAttr.name}")
+}
+```
+
+Pregel example for quickest path in graph
+
+```scala
+import org.apache.spark.graphx._
+// Import random graph generation library
+import org.apache.spark.graphx.util.GraphGenerators
+// A graph with edge attributes containing distances
+val graph  = GraphGenerators.logNormalGraph(sc, numVertices = 5,numEParts=sc.defaultParallelism,mu=4.0,sigma=1.3).mapEdges(e => e.attr.toDouble)
+
+graph.edges.foreach(println)
+  
+val sourceId: VertexId = 0 // The ultimate source
+
+// Initialize the graph such that all vertices except the root have distance infinity.
+
+val initialGraph = graph.mapVertices((id, _) => if (id == sourceId) 0.0 else Double.PositiveInfinity)
+val sssp = initialGraph.pregel(Double.PositiveInfinity)(
+  (id, dist, newDist) => math.min(dist, newDist), 
+  // Vertex Program
+  triplet => {  // Send Message
+    if (triplet.srcAttr + triplet.attr < triplet.dstAttr) {
+      Iterator((triplet.dstId, triplet.srcAttr + triplet.attr))
+    } else {
+      Iterator.empty
+    }
+  },
+  (a,b) => math.min(a,b) // Merge Message
+  )
+println(sssp.vertices.collect.mkString("\n"))
+
+```
+
+
+
 
 
