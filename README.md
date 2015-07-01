@@ -137,9 +137,9 @@ distFile.map(l => l.split(" ")).collect()
 distFile.flatMap(l => l.split(" ")).collect()
 ```
 ```python
-// Python
+# Python
 distFile = sc.textFile("README.md")
-// Difference between map and flatMap
+# Difference between map and flatMap
 distFile.map(lambda l: l.split(" ")).collect()
 distFile.flatMap(lambda l: l.split(" ")).collect()
 ```
@@ -212,7 +212,7 @@ teenagers.collect()
 ```
 IPython Notebook
 ```sh
-//this will not work on  pradeep's box
+#this will not work on  pradeep's box
 IPYTHON_OPTS="notebook" /usr/local/spark/bin/pyspark
 ```
 ```python
@@ -238,24 +238,24 @@ teennames.collect()
 nc -lk 9999
 ```
 ```sh
-//Scala
+#Scala
  /usr/local/spark/bin/run-example org.apache.spark.examples.streaming.NetworkWordCount localhost 9999
 ```
 ```sh
-// Python
+# Python
 /usr/local/spark/bin/spark-submit /usr/local/spark/examples/src/main/python/streaming/network_wordcount.py localhost 9999
 ```
 
 Here is the stateful example that updates a data stream using the same setup
 ```sh
-// Python
+# Python
 /usr/local/spark/bin/spark-submit /usr/local/spark/examples/src/main/python/streaming/stateful_network_wordcount.py localhost 9999
 ```
 #### 009_MLLIB_and_GraphX
 GraphX example
 
 ```sh
-//launch the spark-shell
+#launch the spark-shell
 /usr/local/spark/bin/spark-shell
 ```
 
@@ -317,8 +317,61 @@ val sssp = initialGraph.pregel(Double.PositiveInfinity)(
 println(sssp.vertices.collect.mkString("\n"))
 
 ```
+#### 010_Unified_Work_Flows_Example
+twitter classifier example
 
+```sh
+#download the data bricks code from github
+git clone https://github.com/databricks/reference-apps.git
+#install the simple build tool for scala
+cd reference-apps/twitter_classifier/scala
+#compile the scala code
+sbt/sbt assembly
+```
 
+step 1 collect a data base of tweets
+```sh
+    ${YOUR_SPARK_HOME}/bin/spark-submit \
+     --class "com.databricks.apps.twitter_classifier.Collect" \
+     --master ${YOUR_SPARK_MASTER:-local[4]} \
+     target/scala-2.10/spark-twitter-lang-classifier-assembly-1.0.jar \
+     ${YOUR_OUTPUT_DIR:-/tmp/tweets} \
+     ${NUM_TWEETS_TO_COLLECT:-10000} \
+     ${OUTPUT_FILE_INTERVAL_IN_SECS:-10} \
+     ${OUTPUT_FILE_PARTITIONS_EACH_INTERVAL:-1} \
+     --consumerKey ${YOUR_TWITTER_CONSUMER_KEY} \
+     --consumerSecret ${YOUR_TWITTER_CONSUMER_SECRET} \
+     --accessToken ${YOUR_TWITTER_ACCESS_TOKEN}  \
+     --accessTokenSecret ${YOUR_TWITTER_ACCESS_SECRET}
+```
+
+run the examine tweets and train k-means classifier (needs to be run on 1.2.2 spark for RDD functions have changed to DF functions)
+```sh
+     ${YOUR_SPARK_HOME}/bin/spark-submit \
+     --class "com.databricks.apps.twitter_classifier.ExamineAndTrain" \
+     --master ${YOUR_SPARK_MASTER:-local[4]} \
+     target/scala-2.10/spark-twitter-lang-classifier-assembly-1.0.jar \
+     "${YOUR_TWEET_INPUT:-/tmp/tweets/tweets*/part-*}" \
+     ${OUTPUT_MODEL_DIR:-/tmp/tweets/model} \
+     ${NUM_CLUSTERS:-10} \
+     ${NUM_ITERATIONS:-20}
+
+```
+Predict a new stream of tweets coming in to a trained cluster (i.e. only print those that match)
+```sh
+     ${YOUR_SPARK_HOME}/bin/spark-submit \
+     --class "com.databricks.apps.twitter_classifier.Predict" \
+     --master ${YOUR_SPARK_MASTER:-local[4]} \
+     target/scala-2.10/spark-twitter-lang-classifier-assembly-1.0.jar \
+     ${YOUR_MODEL_DIR:-/tmp/tweets/model} \
+     ${CLUSTER_TO_FILTER:-1} \
+     --consumerKey ${YOUR_TWITTER_CONSUMER_KEY} \
+     --consumerSecret ${YOUR_TWITTER_CONSUMER_SECRET} \
+     --accessToken ${YOUR_TWITTER_ACCESS_TOKEN}  \
+     --accessTokenSecret ${YOUR_TWITTER_ACCESS_SECRET}
+```
+
+To check the running jobs with the spark admin tool go to:  http://d0503433.nmdp.org:4040/jobs/
 
 
 
