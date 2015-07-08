@@ -1,14 +1,13 @@
 #####working file for R-connecting to spark cluster
 library("dplyr")
-library(SparkR)  ###you manually place this file in the R libpaths from the apache 1.4 build file
-
+library(SparkR)  ###you manually place this file in the R libpaths from the apache 1.4.1 build file
+#Sys.setenv('SPARK_HOME'="c:/Users/malbrech/Desktop/spark-1.4.1-bin-hadoop1")
+SPARK_HOME <- Sys.getenv("SPARK_HOME")
 ####this initializes the spark context locally 
-sparkRootDir <- "c:/Users/malbrech/Desktop/spark-1.4.0-bin-hadoop1"
-sc <- sparkR.init(sparkHome=sparkRootDir)
-sqlContext <- sparkRSQL.init(sc)
-
-####this initializes the spark context remotely (i.e. we connect in to a large cluster) 
-sc <- sparkR.init(sparkHome=sparkRootDir)
+sc <- sparkR.init(master = "",
+                  appName = "MyApplication",
+                  sparkHome = SPARK_HOME,
+                  sparkPackages = "com.databricks:spark-csv_2.11:1.0.3")
 sqlContext <- sparkRSQL.init(sc)
 
 ###make a data frame
@@ -20,7 +19,7 @@ local_var_grab <- collect(df) ###grab a DF from the cluster (make it small)
 head(df)
 
 ###
-people <- read.df(sqlContext, paste0(sparkRootDir,"/examples/src/main/resources/people.json"), "json")
+people <- read.df(sqlContext, paste0(SPARK_HOME,"/examples/src/main/resources/people.json"), "json")
 head(people)
 printSchema(people)
 write.df(people, path="people.parquet", source="parquet", mode="overwrite")
@@ -41,9 +40,17 @@ head(arrange(waiting_counts, desc(waiting_counts$count)))
 waiting_counts <- df %>% 
   SparkR::groupBy(df$waiting) %>% 
   SparkR::summarize(count=SparkR::n(df$waiting))
-
 head(waiting_counts)
 
+
+####Read in a CSV file using external package
+download.file("https://github.com/databricks/spark-csv/raw/master/src/test/resources/cars.csv",
+              "cars.csv","internal")
+check <- read.csv("cars.csv")###
+print(check)###result should look like this
+df <- read.df(sqlContext, "cars.csv", source = "com.databricks.spark.csv")
+collect(df)
+write.df(df, "newcars.csv", "com.databricks.spark.csv", "overwrite")
 
 ###close the spark context
 SparkR::sparkR.stop()

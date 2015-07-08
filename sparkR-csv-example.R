@@ -1,6 +1,8 @@
 # Requires Spark 1.4.1
 library(SparkR)
 
+#Sys.setenv('SPARK_HOME'="c:/Users/malbrech/Desktop/spark-1.4.1-bin-hadoop1")
+
 SPARK_HOME <- Sys.getenv("SPARK_HOME")
 # SPARK_HOME <- "/Users/pbashyal/Spark/spark-1.4.1-bin-hadoop1"
 
@@ -8,7 +10,7 @@ SPARK_HOME <- Sys.getenv("SPARK_HOME")
 #               destfile = 'cars.csv',
 #               method = 'curl')  # use 'internal' on Windows
 
-sc <- sparkR.init(master = "local[*]",
+sc <- sparkR.init(master = "",
                   appName = "MyApplication",
                   sparkHome = SPARK_HOME,
                   sparkPackages = "com.databricks:spark-csv_2.11:1.0.3")
