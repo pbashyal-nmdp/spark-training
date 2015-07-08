@@ -20,4 +20,5 @@ df <- read.df(sqlContext, "cars.csv", source = "com.databricks.spark.csv")
 
 write.df(df, "newcars.csv", "com.databricks.spark.csv", "overwrite")
 
+# Cleanup
 sparkR.stop()
