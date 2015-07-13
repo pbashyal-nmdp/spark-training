@@ -1,5 +1,9 @@
 ## Spark – Lightning Fast Analytics Across a cluster
 
+Python Tutorial 
+Chapters 1-5 should be sufficient.
+https://docs.python.org/2.7/tutorial/index.html
+
 #### 001_preflight_check
 
 Start up a spark shell in scala
