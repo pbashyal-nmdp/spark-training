@@ -32,13 +32,13 @@ distData.filter(lambda x: x < 10).collect()
 lines = sc.textFile("/home/pbashyal/data/web.log.gz")
 
 # Transformations
-errors = lines.filter(lambda l: l.find("ERROR") >= 0)
+errors = lines.filter(lambda l: "ERROR" in l)
 messages = errors.map(lambda e: e.split("\t")).map(lambda r: r[1])
 messages.cache() // Keep this RDD in memory if you can
 
 # Actions
-messages.filter(lambda l: l.find("php") >= 0).count()
-messages.filter(lambda l: l.find("mysql") >= 0).count()
+messages.filter(lambda l: "php" in l).count()
+messages.filter(lambda l: "mysql" in l).count()
 ```
 The driver is where your spark shell or your application is running. The driver knows how to talk to the cluster.
 You can look at the lineage graph or operator graph by
