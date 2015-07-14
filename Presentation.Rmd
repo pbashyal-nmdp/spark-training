@@ -1,0 +1,100 @@
+---
+title: "Spark"
+author: "Pradeep Bashyal"
+date: "July 14, 2015"
+output: ioslides_presentation
+---
+
+
+## Agenda
+
+![Apache Spark](images/spark-logo.png)
+
+- What is Spark? 
+- Install Required Sofware. Available in K:\Haplotype\Spark\Software
+- Run through an example together
+- Resources
+
+## Apache Spark
+
+Apache Spark™ is a fast and *general engine* for large-scale data processing. 
+
+![Apache Spark Stack](images/spark-stack.png)
+
+## Required Software
+
+ - git/svn (Xcode)
+ - JDK > 1.6
+ - Python 2.7
+ - R/RStudio
+   - We'll use RStudio for our editor
+ - Spark 1.4
+
+## Running Spark 
+
+  - bin/pyspark
+  - bin/spark-shell
+  - bin/sparkR
+  
+  - bin/spark-submit
+
+## Example - WordCount - Python
+
+```{python, eval=FALSE}
+    lines = sc.textFile("README.md")
+    result = lines.flatMap(lambda x: x.split(" ")).countByValue()
+    for key, value in result.iteritems():
+        print "%s %i" % (key, value)
+
+```
+
+## WordCount - Java
+
+```{scala, eval=FALSE}
+
+public class WordCount {
+  public static void main(String[] args) throws Exception {
+		String master = args[0];
+		JavaSparkContext sc = new JavaSparkContext(
+      master, "wordcount", System.getenv("SPARK_HOME"), System.getenv("JARS"));
+    JavaRDD<String> rdd = sc.textFile(args[1]);
+    JavaPairRDD<String, Integer> counts = rdd.flatMap(
+      new FlatMapFunction<String, String>() {
+        public Iterable<String> call(String x) {
+          return Arrays.asList(x.split(" "));
+        }}).mapToPair(new PairFunction<String, String, Integer>(){
+            public Tuple2<String, Integer> call(String x){
+              return new Tuple2(x, 1);
+            }}).reduceByKey(new Function2<Integer, Integer, Integer>(){
+                public Integer call(Integer x, Integer y){ return x+y;}});
+    counts.saveAsTextFile(args[2]);
+	}
+}
+
+```
+
+## Excercise 
+
+We'll work through this example together.
+https://github.com/pbashyal-nmdp/spark-training/blob/master/weblog-spark.md
+
+ ``K:\Haplotype\Spark\data``
+
+## Streaming Example    
+   Twitter Classifier example by Mark
+   
+   Last section of [README](https://github.com/pbashyal-nmdp/spark-training/blob/master/README.md)
+   
+## Resources
+
+  ``K:\Haplotype\Spark\``
+
+  - Introduction to Apache Spark Videos
+   -- First 10
+  - Books
+    - Learning Spark (Deadtree + Ebook) - Chapters 1-4 and 6
+    - Advanced Analytics - Optional
+    - Learning Python
+      - Python Tutorial Chapters 1 - 5 
+         https://docs.python.org/2.7/tutorial/index.html
+      
