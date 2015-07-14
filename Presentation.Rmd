@@ -11,7 +11,7 @@ output: ioslides_presentation
 ![Apache Spark](images/spark-logo.png)
 
 - What is Spark? 
-- Install Required Sofware. Available in K:\Haplotype\Spark\Software
+- Install Required Sofware. Available in ``K:\Haplotype\Spark\Software``
 - Run through an example together
 - Resources
 
@@ -90,11 +90,11 @@ https://github.com/pbashyal-nmdp/spark-training/blob/master/weblog-spark.md
   ``K:\Haplotype\Spark\``
 
   - Introduction to Apache Spark Videos
-   -- First 10
+    - First 10 videos
   - Books
     - Learning Spark (Deadtree + Ebook) - Chapters 1-4 and 6
     - Advanced Analytics - Optional
     - Learning Python
       - Python Tutorial Chapters 1 - 5 
          https://docs.python.org/2.7/tutorial/index.html
-      
+    
