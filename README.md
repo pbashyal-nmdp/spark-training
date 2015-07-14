@@ -11,6 +11,14 @@ If Spark gives Networking error, use the following to force spark to use the loc
 ```sh
 SPARK_LOCAL_IP=127.0.0.1 ./bin/spark-shell
 ```
+
+To reduce the verbose log, copy ``$SPARK_HOME/conf/log4j.properties.template`` to ``$SPARK_HOME/conf/log4j.properties`` and then change INFO to WARN for root logger.
+
+```diff
+-log4j.rootCategory=INFO, console
++log4j.rootCategory=WARN, console
+```
+
 ```scala
 sc
 sc.master
